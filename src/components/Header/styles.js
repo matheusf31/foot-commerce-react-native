@@ -9,7 +9,7 @@ export const Wrapper = styled.SafeAreaView`
 `;
 
 export const Container = styled.View`
-  height: 90px;
+  height: 70px;
   flex-direction: row;
   flex: 1;
   justify-content: space-between;
