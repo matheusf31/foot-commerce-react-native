@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import colors from '../../styles/colors';
+import { formatPrice } from '../../util/format';
 
 import api from '../../services/api';
 
