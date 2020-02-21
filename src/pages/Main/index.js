@@ -1,11 +1,15 @@
 import React from 'react';
+
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import api from '../../services/api';
 
 import { formatPrice } from '../../util/format';
+
+import * as CartActions from '../../store/modules/cart/actions';
 
 import {
   Container,
@@ -40,15 +44,13 @@ class Main extends React.Component {
   };
 
   handleAddProduct = product => {
-    const { dispatch } = this.props;
+    const { addToCart } = this.props;
 
-    dispatch({
-      type: 'ADD_TO_CART',
-      product,
-    });
+    addToCart(product);
   };
 
   renderProduct = ({ item }) => {
+    const { amount } = this.props;
     return (
       <Product>
         <ProductImage source={{ uri: item.image }} />
@@ -57,7 +59,7 @@ class Main extends React.Component {
         <AddButton onPress={() => this.handleAddProduct(item)}>
           <ProductAmount>
             <Icon name="add-shopping-cart" color="#FFF" size={20} />
-            <ProductAmountText>3</ProductAmountText>
+            <ProductAmountText>{amount[item.id] || 0}</ProductAmountText>
           </ProductAmount>
           <AddButtonText>ADICIONAR</AddButtonText>
         </AddButton>
@@ -67,7 +69,6 @@ class Main extends React.Component {
 
   render() {
     const { products } = this.state;
-
     return (
       <Container>
         <FlatList
@@ -82,7 +83,18 @@ class Main extends React.Component {
   }
 }
 
-export default connect()(Main);
+const mapStateToProps = state => ({
+  amount: state.cart.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+    return amount;
+  }, {}),
+});
+
+// converte actions do redux em propriedades do componente
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
 
 /**
  * flatlist:

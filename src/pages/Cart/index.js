@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Text } from 'react-native';
 
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as CartActions from '../../store/modules/cart/actions';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import colors from '../../styles/colors';
@@ -32,8 +34,14 @@ import {
   EmptyText,
 } from './styles';
 
-function Cart({ cart }) {
-  console.tron.log(cart);
+function Cart({ cart, removeFromCart, updateAmount, total }) {
+  function increment(product) {
+    updateAmount(product.id, product.amount + 1);
+  }
+
+  function decrement(product) {
+    updateAmount(product.id, product.amount - 1);
+  }
 
   return (
     <Container>
@@ -48,7 +56,7 @@ function Cart({ cart }) {
                     <ProductTitle>{product.title}</ProductTitle>
                     <ProductPrice>{product.priceFormatted}</ProductPrice>
                   </ProductDetails>
-                  <ProductDelete>
+                  <ProductDelete onPress={() => removeFromCart(product.id)}>
                     <Icon
                       name="delete-forever"
                       size={24}
@@ -57,7 +65,7 @@ function Cart({ cart }) {
                   </ProductDelete>
                 </ProductInfo>
                 <ProductControls>
-                  <ProductControlButton>
+                  <ProductControlButton onPress={() => decrement(product)}>
                     <Icon
                       name="remove-circle-outline"
                       size={20}
@@ -65,21 +73,21 @@ function Cart({ cart }) {
                     />
                   </ProductControlButton>
                   <ProductAmount value={String(product.amount)} />
-                  <ProductControlButton>
+                  <ProductControlButton onPress={() => increment(product)}>
                     <Icon
                       name="add-circle-outline"
                       size={20}
                       color={colors.primary}
                     />
                   </ProductControlButton>
-                  <ProductSubtotal>176.90</ProductSubtotal>
+                  <ProductSubtotal>{product.subtotal}</ProductSubtotal>
                 </ProductControls>
               </Product>
             ))}
           </Products>
           <TotalContainer>
             <TotalText>TOTAL</TotalText>
-            <TotalAmount>1590</TotalAmount>
+            <TotalAmount>{total}</TotalAmount>
             <Order>
               <OrderText>FINALIZAR PEDIDO</OrderText>
             </Order>
@@ -95,9 +103,21 @@ function Cart({ cart }) {
   );
 }
 
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
+
+// o cálculo do subtotal só vai ser feito se algo no reducer atualizar
 const mapStateToProps = state => ({
   // state.cart => nome do reducer
-  cart: state.cart,
+  cart: state.cart.map(product => ({
+    ...product,
+    subtotal: formatPrice(product.price * product.amount),
+  })),
+  total: formatPrice(
+    state.cart.reduce((total, product) => {
+      return total + product.price * product.amount;
+    }, 0)
+  ),
 });
 
-export default connect(mapStateToProps)(Cart);
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);

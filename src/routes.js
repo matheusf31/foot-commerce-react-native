@@ -11,6 +11,14 @@ import Header from './components/Header';
 
 const Stack = createStackNavigator();
 
+function HeaderComponent({ navigation }) {
+  return (
+    <Provider store={store}>
+      <Header navigation={navigation} />
+    </Provider>
+  );
+}
+
 export default function Routes() {
   return (
     <NavigationContainer>
@@ -24,13 +32,5 @@ export default function Routes() {
         <Stack.Screen name="Cart" component={Cart} />
       </Stack.Navigator>
     </NavigationContainer>
-  );
-}
-
-function HeaderComponent({ navigation }) {
-  return (
-    <Provider store={store}>
-      <Header navigation={navigation} />
-    </Provider>
   );
 }
