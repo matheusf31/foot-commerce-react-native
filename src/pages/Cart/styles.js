@@ -91,7 +91,7 @@ export const TotalAmount = styled.Text`
 export const Order = styled.TouchableOpacity`
   background: ${colors.primary};
   padding: 12px;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
   border-radius: 4px;
 `;
 

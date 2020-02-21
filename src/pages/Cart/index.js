@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Text } from 'react-native';
 
+import { connect } from 'react-redux';
+
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import colors from '../../styles/colors';
 import { formatPrice } from '../../util/format';
@@ -30,31 +32,21 @@ import {
   EmptyText,
 } from './styles';
 
-export default function Cart() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    async function loadProducts() {
-      const response = await api.get('/products');
-
-      setProducts(response.data);
-    }
-
-    loadProducts();
-  }, []);
+function Cart({ cart }) {
+  console.tron.log(cart);
 
   return (
     <Container>
-      {products.length ? (
+      {cart.length ? (
         <>
           <Products>
-            {products.map(product => (
+            {cart.map(product => (
               <Product key={product.id}>
                 <ProductInfo>
                   <ProductImage source={{ uri: product.image }} />
                   <ProductDetails>
                     <ProductTitle>{product.title}</ProductTitle>
-                    <ProductPrice>{product.price}</ProductPrice>
+                    <ProductPrice>{product.priceFormatted}</ProductPrice>
                   </ProductDetails>
                   <ProductDelete>
                     <Icon
@@ -72,7 +64,7 @@ export default function Cart() {
                       color={colors.primary}
                     />
                   </ProductControlButton>
-                  <ProductAmount value={String(3)} />
+                  <ProductAmount value={String(product.amount)} />
                   <ProductControlButton>
                     <Icon
                       name="add-circle-outline"
@@ -102,3 +94,10 @@ export default function Cart() {
     </Container>
   );
 }
+
+const mapStateToProps = state => ({
+  // state.cart => nome do reducer
+  cart: state.cart,
+});
+
+export default connect(mapStateToProps)(Cart);
