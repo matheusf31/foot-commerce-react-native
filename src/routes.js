@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { Provider } from 'react-redux';
 import store from './store';
+import { navigationRef } from './services/RootNavigation';
 
 import Main from './pages/Main';
 import Cart from './pages/Cart';
@@ -21,7 +22,7 @@ function HeaderComponent({ navigation }) {
 
 export default function Routes() {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         screenOptions={{
           cardStyle: { backgroundColor: '#191920' },

@@ -1,6 +1,8 @@
 import { Alert } from 'react-native';
 import { call, select, put, all, takeLatest } from 'redux-saga/effects';
-import NavigationService from '../../../services/navigation';
+
+import * as RootNavigation from '../../../services/RootNavigation';
+
 import api from '../../../services/api';
 import { formatPrice } from '../../../util/format';
 
@@ -35,6 +37,8 @@ function* addToCart({ id }) {
     };
 
     yield put(addToCartSuccess(data));
+
+    RootNavigation.navigate('Cart');
   }
 }
 
@@ -52,8 +56,6 @@ function* updateAmount({ id, amount }) {
   }
 
   yield put(updateAmountSuccess(id, amount));
-
-  NavigationService.navigate('Cart');
 }
 
 export default all([
